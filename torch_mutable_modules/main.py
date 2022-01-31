@@ -31,6 +31,9 @@ def convert_to_mutable_module(module: _T) -> _T:
             module = object.__getattribute__(self, "_module")
             object.__setattr__(module, name, value)
 
+        def __repr__(self):
+            return f"MutableModule({self._module})"
+
     cached_parameters = module.named_parameters()
     converted_module = MutableModule(module)
     for name, param in cached_parameters:
@@ -44,8 +47,11 @@ def convert_to_mutable_module(module: _T) -> _T:
                 for part in split_name[1:-1]:
                     parent_object = base_object
                     base_object = getattr(base_object, part)
-
-                print(convert_to_mutable_module(base_object).__class__.mro())
+                setattr(
+                    parent_object,
+                    split_name[-2],
+                    convert_to_mutable_module(base_object),
+                )
         else:
             object.__setattr__(
                 module,
