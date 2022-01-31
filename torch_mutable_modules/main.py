@@ -1,3 +1,4 @@
+from posixpath import split
 import torch.nn as nn
 from typing import TypeVar, Type
 
@@ -14,41 +15,44 @@ def convert_to_mutable_module(module: _T) -> _T:
 
     `module` (`torch.nn.Module`): The module to convert into a mutable module.
     """
-    try:
 
-        class MutableModule(*module.__class__.mro()):
-            def __init__(self, module: _T):
-                object.__setattr__(self, "_module", module)
-                super(nn.Module, self).__init__()
+    class MutableModule(*module.__class__.mro()):
+        def __init__(self, module: _T):
+            object.__setattr__(self, "_module", module)
+            super(nn.Module, self).__init__()
 
-            def __getattribute__(self, name: str):
-                module = object.__getattribute__(self, "_module")
-                if name == "_module":
-                    return module
-                return getattr(module, name)
+        def __getattribute__(self, name: str):
+            module = object.__getattribute__(self, "_module")
+            if name == "_module":
+                return module
+            return getattr(module, name)
 
-            def __setattr__(self, name: str, value):
-                module = object.__getattribute__(self, "_module")
-                object.__setattr__(module, name, value)
+        def __setattr__(self, name: str, value):
+            module = object.__getattribute__(self, "_module")
+            object.__setattr__(module, name, value)
 
-        cached_parameters = (
-            module.named_parameters() if hasattr(module, "named_parameters") else []
-        )
-        converted_module = MutableModule(module)
-        for name, param in cached_parameters:
-            split_name = name.split(".")
-            if len(split_name) > 1:
+    cached_parameters = module.named_parameters()
+    converted_module = MutableModule(module)
+    for name, param in cached_parameters:
+        split_name = name.split(".")
+        if len(split_name) > 1:
+            try:
                 convert_to_mutable_module(param)
-            else:
-                object.__setattr__(
-                    module,
-                    name,
-                    _clone_param(param),
-                )
-        return converted_module
+            except AttributeError:
+                parent_object = converted_module
+                base_object = getattr(converted_module, split_name[0])
+                for part in split_name[1:-1]:
+                    parent_object = base_object
+                    base_object = getattr(base_object, part)
 
-    except:
-        return module
+                print(convert_to_mutable_module(base_object).__class__.mro())
+        else:
+            object.__setattr__(
+                module,
+                name,
+                _clone_param(param),
+            )
+    return converted_module
 
 
 # mutable_module decorator

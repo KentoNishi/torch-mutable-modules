@@ -48,5 +48,4 @@ class MutableCustom(nn.Module):  # the module class
 
 # all parameters are recursively made mutable
 mutable_custom_module = MutableCustom()
-print(mutable_custom_module.conv.weight)
 mutable_custom_module.conv.weight += 1
