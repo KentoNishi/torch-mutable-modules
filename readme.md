@@ -49,23 +49,20 @@ loss.backward()
 optimizer.step()
 ```
 
-This library provides a way to easily convert PyTorch modules into mutable modules.
+net_2 = convert_to_mutable_module(torch.nn.Linear(1, 1))
+This library provides a way to easily convert PyTorch modules into mutable modules with the `convert_to_mutable_module` function and the `@mutable_module` decorator.
 
 ## Installation
 ```bash
 pip install torch-mutable-modules
 ```
 
-## Usage
+### Usage
 
-
-
-### Example
-
-
+Check out [example.py](./example.py) to see example usages of the `convert_to_mutable_module` function and the `@mutable_module` decorator.
 
 ## Documentation
-See the [documentation page](https://kentonishi.github.io/torch-mutable-modules/) for detailed documentation!
+See the [documentation page](https://kentonishi.github.io/torch-mutable-modules/) for detailed documentation.
 
 ## Contributing
 Please feel free to submit issues or pull requests!
