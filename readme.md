@@ -105,7 +105,24 @@ my_module.linear.weight += 69
 my_module.linear.weight # tensor([[69.]], grad_fn=<AddBackward0>)
 ```
 
-### ⚠ Warning: `.cuda()` and similar methods are not supported as of yet. Please replace individual parameters with CUDA tensors for the time being.
+### Usage with CUDA
+
+To create a module on the GPU, simply pass a PyTorch module that is already on the GPU to the `to_mutable_module` function:
+
+```python
+converted_module = to_mutable_module(
+    torch.nn.Linear(1, 1).cuda()
+) # converted_module is now a mutable module on the GPU
+```
+
+Moving a module to the GPU with `.to()` and `.cuda()` after instanciation is ***NOT*** supported. Instead, hot-swap the module parameter tensors with their CUDA counterparts.
+
+```python
+# both of these are valid
+converted_module.weight = converted_module.weight.cuda()
+converted_module.bias = converted_module.bias.to("cuda")
+```
+
 
 ### Detailed examples
 
