@@ -82,6 +82,10 @@ To convert an existing PyTorch module into a mutable module, use the `convert_to
 converted_module = convert_to_mutable_module(
     torch.nn.Linear(1, 1)
 ) # type of converted_module is still torch.nn.Linear
+
+converted_module.weight *= 0
+convreted_module.weight += 69
+convreted_module.weight # tensor([[69.]], grad_fn=<AddBackward0>)
 ```
 
 You can also declare entire PyTorch module classes as mutable, and all child modules will be recursively converted into mutable modules:
@@ -95,11 +99,16 @@ class MyModule(nn.Module):
     
     def forward(self, x):
         return self.linear(x)
+
+my_module = MyModule()
+my_module.linear.weight *= 0
+my_module.linear.weight += 69
+my_module.linear.weight # tensor([[69.]], grad_fn=<AddBackward0>)
 ```
 
-### More examples
+### Detailed examples
 
-Check out [example.py](./example.py) to see more example usages of the `convert_to_mutable_module` function and the `@mutable_module` decorator.
+Please check out [example.py](./example.py) to see more detailed example usages of the `convert_to_mutable_module` function and the `@mutable_module` decorator.
 
 ## Contributing
 Please feel free to submit issues or pull requests!
