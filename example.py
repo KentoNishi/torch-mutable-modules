@@ -17,8 +17,8 @@ def test_convert_to_mutable_module_function():
     mutable_linear = convert_to_mutable_module(nn.Linear(1, 1))
 
     # parameters are initially random
-    assert str(mutable_linear.weight) == "tensor([[-0.5171]], grad_fn=<CloneBackward0>)"
-    assert str(mutable_linear.bias) == "tensor([0.4099], grad_fn=<CloneBackward0>)"
+    assert torch.is_tensor(mutable_linear.weight)
+    assert torch.is_tensor(mutable_linear.bias)
 
     # do in-place operations on the weights
     mutable_linear.weight.fill_(420)
@@ -32,7 +32,7 @@ def test_convert_to_mutable_module_function():
     # mutable layers can be used like normal modules
     assert (
         str(mutable_linear(torch.ones(1, 1)))
-        == "tensor([[420.6900]], grad_fn=<AddmmBackward0>)"
+        == "tensor([[420.6900]], grad_fn=<AddmmBackward>)"
     )
 
 

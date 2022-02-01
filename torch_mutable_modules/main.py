@@ -1,4 +1,3 @@
-from posixpath import split
 import torch.nn as nn
 from typing import TypeVar, Type
 
@@ -35,12 +34,13 @@ def convert_to_mutable_module(module: _T) -> _T:
             return f"MutableModule({self._module})"
 
     converted_module = MutableModule(module)
+
     for name, param in list(module.named_parameters()):
         split_name = name.split(".")
         if len(split_name) > 1:
-            try:
+            if isinstance(param, nn.Module):
                 convert_to_mutable_module(param)
-            except AttributeError:
+            else:
                 parent_object = converted_module
                 base_object = getattr(converted_module, split_name[0])
                 for part in split_name[1:-1]:
