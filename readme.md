@@ -1,6 +1,6 @@
 # Torch Mutable Modules
 
-Use in-place and replace operations on PyTorch module parameters.
+Use in-place and assignment operations on PyTorch module parameters with support for autograd.
 
 [![Publish to PyPI](https://github.com/KentoNishi/torch-mutable-modules/actions/workflows/publish.yaml/badge.svg)](https://github.com/KentoNishi/torch-mutable-modules/actions/workflows/publish.yaml)
 [![Run tests](https://github.com/KentoNishi/torch-mutable-modules/actions/workflows/test.yaml/badge.svg)](https://github.com/KentoNishi/torch-mutable-modules/actions/workflows/test.yaml)
