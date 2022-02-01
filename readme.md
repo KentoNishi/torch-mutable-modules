@@ -106,6 +106,8 @@ my_module.linear.weight += 69
 my_module.linear.weight # tensor([[69.]], grad_fn=<AddBackward0>)
 ```
 
+### ⚠ Warning: `.cuda()` and similar methods are not supported as of yet. Please replace individual parameters with CUDA tensors for the time being.
+
 ### Detailed examples
 
 Please check out [example.py](./example.py) to see more detailed example usages of the `convert_to_mutable_module` function and the `@mutable_module` decorator.
