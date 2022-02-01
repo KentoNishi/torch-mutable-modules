@@ -34,9 +34,8 @@ def convert_to_mutable_module(module: _T) -> _T:
         def __repr__(self):
             return f"MutableModule({self._module})"
 
-    cached_parameters = module.named_parameters()
     converted_module = MutableModule(module)
-    for name, param in cached_parameters:
+    for name, param in list(module.named_parameters()):
         split_name = name.split(".")
         if len(split_name) > 1:
             try:
