@@ -31,8 +31,7 @@ def test_convert_to_mutable_module_function():
 
     # mutable layers can be used like normal modules
     assert (
-        str(mutable_linear(torch.ones(1, 1)))
-        == "tensor([[420.6900]], grad_fn=<AddmmBackward>)"
+        str(mutable_linear(torch.ones(1, 1))).startswith("tensor([[420.6900]], grad_fn=<AddmmBackward")
     )
 
 
