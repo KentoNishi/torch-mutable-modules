@@ -8,7 +8,7 @@ def _clone_param(param: nn.parameter.Parameter) -> nn.parameter.Parameter:
     return param.data.clone().detach().requires_grad_(True).clone()
 
 
-def convert_to_mutable_module(module: _T) -> _T:
+def to_mutable_module(module: _T) -> _T:
     """
     Convert a module to a mutable module.
 
@@ -39,7 +39,7 @@ def convert_to_mutable_module(module: _T) -> _T:
         split_name = name.split(".")
         if len(split_name) > 1:
             if isinstance(param, nn.Module):
-                convert_to_mutable_module(param)
+                to_mutable_module(param)
             else:
                 parent_object = converted_module
                 base_object = getattr(converted_module, split_name[0])
@@ -49,30 +49,12 @@ def convert_to_mutable_module(module: _T) -> _T:
                 setattr(
                     parent_object,
                     split_name[-2],
-                    convert_to_mutable_module(base_object),
+                    to_mutable_module(base_object),
                 )
+
         else:
             object.__setattr__(
-                module,
-                name,
-                _clone_param(param),
+                module, name, _clone_param(param),
             )
     return converted_module
 
-
-# mutable_module decorator
-def mutable_module(module_class: Type[_T]) -> Type[_T]:
-    """
-    Decorator for converting PyTorch modules into mutable modules.
-
-    ```python
-    @mutable_module
-    class MyModule(nn.Module):
-        pass
-    ```
-    """
-
-    def constructor(*args, **kwargs) -> _T:
-        return convert_to_mutable_module(module_class(*args, **kwargs))
-
-    return constructor

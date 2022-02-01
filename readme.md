@@ -34,7 +34,7 @@ p_weight_and_bias = net_1(input_0).unsqueeze(2)
 p_weight, p_bias = p_weight_and_bias[:, 0], p_weight_and_bias[:, 1]
 
 # create a mutable network (net_2)
-net_2 = convert_to_mutable_module(torch.nn.Linear(1, 1))
+net_2 = to_mutable_module(torch.nn.Linear(1, 1))
 
 # hot-swap the weights and biases of net_2 with the predicted values
 net_2.weight = p_weight
@@ -47,7 +47,7 @@ loss.backward()
 optimizer.step()
 ```
 
-This library provides a way to easily convert PyTorch modules into mutable modules with the `convert_to_mutable_module` function and the `@mutable_module` decorator.
+This library provides a way to easily convert PyTorch modules into mutable modules with the `to_mutable_module` function.
 
 ## Installation
 You can install `torch-mutable-modules` from [PyPI](https://pypi.org/project/torch-mutable-modules/).
@@ -70,16 +70,16 @@ You can use wildcard imports or import specific functions directly:
 # import all functions
 from torch_mutable_modules import *
 
-# ... or import them manually
-from torch_mutable_modules import convert_to_mutable_module, mutable_module
+# ... or import the function manually
+from torch_mutable_modules import to_mutable_module
 ```
 
 ## Usage
 
-To convert an existing PyTorch module into a mutable module, use the `convert_to_mutable_module` function:
+To convert an existing PyTorch module into a mutable module, use the `to_mutable_module` function:
 
 ```python
-converted_module = convert_to_mutable_module(
+converted_module = to_mutable_module(
     torch.nn.Linear(1, 1)
 ) # type of converted_module is still torch.nn.Linear
 
@@ -88,10 +88,9 @@ convreted_module.weight += 69
 convreted_module.weight # tensor([[69.]], grad_fn=<AddBackward0>)
 ```
 
-You can also declare entire PyTorch module classes as mutable, and all child modules will be recursively converted into mutable modules:
+You can also declare your own PyTorch module classes as mutable, and all child modules will be recursively converted into mutable modules:
 
 ```python
-@mutable_module
 class MyModule(nn.Module):
     def __init__(self):
         super().__init__()
@@ -100,7 +99,7 @@ class MyModule(nn.Module):
     def forward(self, x):
         return self.linear(x)
 
-my_module = MyModule()
+my_module = to_mutable_module(MyModule())
 my_module.linear.weight *= 0
 my_module.linear.weight += 69
 my_module.linear.weight # tensor([[69.]], grad_fn=<AddBackward0>)
@@ -110,7 +109,7 @@ my_module.linear.weight # tensor([[69.]], grad_fn=<AddBackward0>)
 
 ### Detailed examples
 
-Please check out [example.py](./example.py) to see more detailed example usages of the `convert_to_mutable_module` function and the `@mutable_module` decorator.
+Please check out [example.py](./example.py) to see more detailed example usages of the `to_mutable_module` function.
 
 ## Contributing
 Please feel free to submit issues or pull requests!

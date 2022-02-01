@@ -3,18 +3,18 @@
 from typing import List
 import torch
 import torch.nn as nn
-from torch_mutable_modules import convert_to_mutable_module, mutable_module
+from torch_mutable_modules import to_mutable_module
 
 torch.manual_seed(1984)
 
 
-def test_convert_to_mutable_module_function():
+def test_mutable_module_function():
     """
-    Use the `convert_to_mutable_module` function to convert a PyTorch module to a mutable module.
+    Use the `to_mutable_module` function to convert a PyTorch module to a mutable module.
     """
 
     # create a mutable linear layer
-    mutable_linear = convert_to_mutable_module(nn.Linear(1, 1))
+    mutable_linear = to_mutable_module(nn.Linear(1, 1))
 
     # parameters are initially random
     assert torch.is_tensor(mutable_linear.weight)
@@ -30,17 +30,16 @@ def test_convert_to_mutable_module_function():
     assert str(mutable_linear.bias) == "tensor([0.6900], grad_fn=<MulBackward0>)"
 
     # mutable layers can be used like normal modules
-    assert (
-        str(mutable_linear(torch.ones(1, 1))).startswith("tensor([[420.6900]], grad_fn=<AddmmBackward")
+    assert str(mutable_linear(torch.ones(1, 1))).startswith(
+        "tensor([[420.6900]], grad_fn=<AddmmBackward"
     )
 
 
-def test_mutable_module_decorator():
+def test_custom_module():
     """
-    Use the `mutable_module` decorator to convert a PyTorch module into a mutable module.
+    Convert a custom PyTorch module into a mutable module.
     """
 
-    @mutable_module  # declare the module class mutable
     class MutableCustom(nn.Module):  # the module class
         def __init__(self):
             super().__init__()
@@ -54,7 +53,7 @@ def test_mutable_module_decorator():
             return x
 
     # all parameters are recursively made mutable
-    mutable_custom_module = MutableCustom()
+    mutable_custom_module = to_mutable_module(MutableCustom())
     mutable_custom_module.convs[0].weight *= 0
     mutable_custom_module.convs[0].weight += 420
     assert (
