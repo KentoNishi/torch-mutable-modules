@@ -21,7 +21,7 @@ jobs:
       run: echo "$GITHUB_CONTEXT" 
     - name: Install dependencies
       run: |
-        apt-get update && apt-get upgrade python-pip
+        python3 -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install pytest
         pip install setuptools wheel twine
