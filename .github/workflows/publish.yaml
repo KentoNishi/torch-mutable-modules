@@ -22,7 +22,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install setuptools wheel twine mkdocs
+        pip install setuptools wheel twine
     - name: Build and publish
       env:
         TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
@@ -31,16 +31,3 @@ jobs:
         echo Running in $PWD
         python setup.py ${{ github.ref }} sdist bdist_wheel
         twine upload dist/*
-    - name: Build docs
-      run: |
-        mkdocs build
-        mv site ../site
-        git fetch --all
-        git checkout gh-pages -f
-        cp -r ../site/* .
-    - name: Deploy Docs
-      uses: EndBug/add-and-commit@v7
-      with:
-        message: 'Updated documentation'
-        add: "."
-        branch: gh-pages

@@ -2,8 +2,6 @@
 
 Use in-place and replace operations on PyTorch module parameters.
 
-[View on PyPI](https://pypi.org/project/torch-mutable-modules/) / [View Documentation](https://kentonishi.github.io/torch-mutable-modules/)
-
 [![Publish to PyPI](https://github.com/KentoNishi/torch-mutable-modules/actions/workflows/publish.yaml/badge.svg)](https://github.com/KentoNishi/torch-mutable-modules/actions/workflows/publish.yaml)
 [![Run tests](https://github.com/KentoNishi/torch-mutable-modules/actions/workflows/test.yaml/badge.svg)](https://github.com/KentoNishi/torch-mutable-modules/actions/workflows/test.yaml)
 [![PyPI version](https://img.shields.io/pypi/v/torch-mutable-modules.svg?style=flat)](https://pypi.org/project/torch-mutable-modules/)
@@ -21,7 +19,7 @@ linear_layer.weight.data += 69
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 # Valid, but will NOT store grad_fn=<AddBackward0>
 linear_layer.weight += 420
-# ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+# ^^^^^^^^^^^^^^^^^^^^^^^^
 # RuntimeError: a leaf Variable that requires grad is being used in an in-place operation.
 ```
 
@@ -49,20 +47,59 @@ loss.backward()
 optimizer.step()
 ```
 
-net_2 = convert_to_mutable_module(torch.nn.Linear(1, 1))
 This library provides a way to easily convert PyTorch modules into mutable modules with the `convert_to_mutable_module` function and the `@mutable_module` decorator.
 
 ## Installation
+You can install `torch-mutable-modules` from [PyPI](https://pypi.org/project/torch-mutable-modules/).
+
 ```bash
 pip install torch-mutable-modules
 ```
 
-### Usage
+To upgrade an existing installation of `torch-mutable-modules`, use the following command:
 
-Check out [example.py](./example.py) to see example usages of the `convert_to_mutable_module` function and the `@mutable_module` decorator.
+```bash
+pip install --upgrade --no-cache-dir torch-mutable-modules
+```
 
-## Documentation
-See the [documentation page](https://kentonishi.github.io/torch-mutable-modules/) for detailed documentation.
+## Importing
+
+You can use wildcard imports or import specific functions directly:
+
+```python
+# import all functions
+from torch_mutable_modules import *
+
+# ... or import them manually
+from torch_mutable_modules import convert_to_mutable_module, mutable_module
+```
+
+## Usage
+
+To convert an existing PyTorch module into a mutable module, use the `convert_to_mutable_module` function:
+
+```python
+converted_module = convert_to_mutable_module(
+    torch.nn.Linear(1, 1)
+) # type of converted_module is still torch.nn.Linear
+```
+
+You can also declare entire PyTorch module classes as mutable, and all child modules will be recursively converted into mutable modules:
+
+```python
+@mutable_module
+class MyModule(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.linear = nn.Linear(1, 1)
+    
+    def forward(self, x):
+        return self.linear(x)
+```
+
+### More examples
+
+Check out [example.py](./example.py) to see more example usages of the `convert_to_mutable_module` function and the `@mutable_module` decorator.
 
 ## Contributing
 Please feel free to submit issues or pull requests!

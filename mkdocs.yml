@@ -1,8 +1,0 @@
-site_name: Torch Mutable Modules Docs
-site_url: https://kentonishi.github.io/torch-mutable-modules/
-nav:
-  - About: index.md
-  - Usage: usage.md
-theme: readthedocs
-extra_css:
-  - index.css
