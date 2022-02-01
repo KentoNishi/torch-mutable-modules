@@ -14,15 +14,10 @@ jobs:
           python-version: '3.x'
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          curl https://bootstrap.pypa.io/get-pip.py | python
-          pip install -r requirements.txt
-          pip install pytest numpy scipy
+          python3 -m pip install --upgrade pip
+          python3 -m pip install -r requirements.txt
+          python3 -m pip install pytest
       - name: Test with pytest
         run: |
           ls -a
           pytest example.py
-      - uses: actions/upload-artifact@v2
-        with:
-          name: WAV Files
-          path: ./wavs
