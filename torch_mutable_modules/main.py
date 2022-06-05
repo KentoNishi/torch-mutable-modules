@@ -8,6 +8,10 @@ def _clone_param(param: nn.parameter.Parameter) -> nn.parameter.Parameter:
     return param.data.clone().detach().requires_grad_(True).clone()
 
 
+class _Base_Mutable_Module:
+    pass
+
+
 def to_mutable_module(module: _T) -> _T:
     """
     Convert a module to a mutable module.
@@ -15,7 +19,7 @@ def to_mutable_module(module: _T) -> _T:
     `module` (`torch.nn.Module`): The module to convert into a mutable module.
     """
 
-    class MutableModule(*module.__class__.mro()):
+    class MutableModule(_Base_Mutable_Module, *module.__class__.mro()):
         def __init__(self, module: _T):
             object.__setattr__(self, "_module", module)
             super(nn.Module, self).__init__()
@@ -32,6 +36,9 @@ def to_mutable_module(module: _T) -> _T:
 
         def __repr__(self):
             return f"MutableModule({self._module})"
+
+    if isinstance(module, _Base_Mutable_Module):
+        return module
 
     converted_module = MutableModule(module)
 
@@ -54,7 +61,8 @@ def to_mutable_module(module: _T) -> _T:
 
         else:
             object.__setattr__(
-                module, name, _clone_param(param),
+                module,
+                name,
+                _clone_param(param),
             )
     return converted_module
-
