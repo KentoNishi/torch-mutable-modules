@@ -28,6 +28,8 @@ In some cases, however, it is useful to be able to modify module parameters in-p
 ```python
 # create a parameter predictor network (net_1)
 net_1 = torch.nn.Linear(1, 2)
+# create an optimizer for net_1
+optimizer_1 = torch.optim.SGD(net_1.parameters(), lr=0.01)
 
 # predict the weights and biases of net_2 using net_1
 p_weight_and_bias = net_1(input_0).unsqueeze(2)
